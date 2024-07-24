@@ -1,0 +1,89 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Layouts {
+  id                      String               @id @default(cuid())
+  createdAt               DateTime             @default(now())
+  updatedAt               DateTime             @updatedAt
+  name                    String?
+  thumbnailUrl            String?
+  publishedVersion        Int?
+  publishedSubversion     Int?
+  currentVersion          Int?
+  currentSubversion       Int?
+  currentVersionStatus    String?
+  orderBy                 Int?
+  status                  String?
+  createdBy               String?
+  authorisedBy            String?
+  createdOn               DateTime?
+  authorisedOn            DateTime?
+  layoutSections          LayoutSection[]
+  userLayoutsItems        UserLayouts[]
+  pendingUserLayoutsItems PendingUserLayouts[]
+}
+
+model Section {
+  id             String          @id @default(cuid())
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  name           String?
+  description    String?
+  thumbnailUrl   String?
+  tags           String?
+  status         String?
+  createdOn      DateTime?
+  modifiedOn     DateTime?
+  layoutSections LayoutSection[]
+}
+
+model PendingUserLayouts {
+  id               String    @id @default(cuid())
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  userId           String?
+  layoutVersion    Int?
+  layoutSubversion Int?
+  createdOn        DateTime?
+  raisedBy         String?
+  authorisedBy     String?
+  layout           Layouts?  @relation(fields: [layoutId], references: [id])
+  layoutId         String?
+}
+
+model LayoutSection {
+  id            String    @id @default(cuid())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  layoutVersion Int?
+  content       String?
+  orderBy       Int?
+  status        String?
+  createdBy     String?
+  authorisedBy  String?
+  createdOn     DateTime?
+  authorisedOn  DateTime?
+  layout        Layouts?  @relation(fields: [layoutId], references: [id])
+  layoutId      String?
+  section       Section?  @relation(fields: [sectionId], references: [id])
+  sectionId     String?
+}
+
+model UserLayouts {
+  id           String    @id @default(cuid())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  userId       String?
+  createdBy    String?
+  authorisedBy String?
+  createdOn    DateTime?
+  authorisedOn DateTime?
+  layout       Layouts?  @relation(fields: [layoutId], references: [id])
+  layoutId     String?
+}
